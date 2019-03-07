@@ -75,9 +75,9 @@ public class StockInformationTests {
 		String expectedFormattedInfo = "Centrica PLC[CNA] 123.45";
 
 		StockInformation si = new StockInformation(id, password, stockSymbol, stockServiceStub);
-		String actualFormattedInfo = si.toString();
 
 		// Act
+		String actualFormattedInfo = si.toString();
 
 		// Assert
 		assertEquals(expectedFormattedInfo, actualFormattedInfo);
@@ -86,16 +86,15 @@ public class StockInformationTests {
 	@Test
 	public void testMarketCapitalisationIsCalculated() {
 		// Arrange
-		// Expected Value = 1,234,500,000
 		double expectedMarketCapitalisationInMillions = 12;
 		int id = 2;
 		String password = "Pa$$w0rd";
 		String stockSymbol = "CNA";
 
 		StockInformation si = new StockInformation(id, password, stockSymbol, stockServiceStub);
-		Double actualMarketCapitalisationInMillions = si.calculateMarketCapitalisation();
 
 		// Act
+		Double actualMarketCapitalisationInMillions = si.calculateMarketCapitalisation();
 
 		// Assert
 		assertEquals(expectedMarketCapitalisationInMillions, actualMarketCapitalisationInMillions, 0.1);
@@ -110,9 +109,26 @@ public class StockInformationTests {
 		String expectedStockInfo = "No Such Symbol";
 		String password = "Pa$$w0rd";
 		StockInformation si = new StockInformation(id, password, symbol, stockServiceStub);
-		String actualStockInfo = si.toString();
 
 		// Act
+		String actualStockInfo = si.toString();
+
+		// Assert
+		assertEquals(expectedStockInfo, actualStockInfo);
+	}
+
+	@Test
+	public void test_GetStockInformation_Returns_Defaults_When_Not_Authenticated() {
+		// Arrange
+		int id = 5;
+		String password = "Pa$$w0rd";
+		String symbol = "CNA";
+		String expectedStockInfo = "  Not Allowed 0.0 0";
+
+		StockInformation si = new StockInformation(id, password, symbol, stockServiceStub);
+
+		// Act
+		String actualStockInfo = si.toString();
 
 		// Assert
 		assertEquals(expectedStockInfo, actualStockInfo);

@@ -10,11 +10,11 @@ public class StockInformation {
 	private static final int CURRENT_PRICE_POS = 2;
 	private static final int COMPANY_POS = 1;
 	private static final int SYMBOL_POS = 0;
+
 	private int userId;
 	private String password;
 	private String symbol;
-	private boolean available;
-	private boolean exists;
+
 	private String companyName;
 	private Double currentPrice;
 	private Integer numberOfSharesOutstanding;
@@ -22,7 +22,12 @@ public class StockInformation {
 
 	private String stockInfo;
 
+	@SuppressWarnings("unused")
 	private StockService stockService;
+
+	private boolean available;
+	private boolean exists;
+	private boolean loggedIn;
 
 	public StockInformation(int userId, String password, String symbol, StockService stockService) {
 		this.userId = userId;
@@ -31,10 +36,16 @@ public class StockInformation {
 		this.stockService = stockService;
 		if (isValidUser() && isValidPassword()) {
 			validateStockSymbol();
-			boolean loggedIn = stockService.authenticate(userId, password);
+			loggedIn = stockService.authenticate(userId, password);
 			if (loggedIn) {
 				// Begin processing the stock info retrieved from the web service
 				stockInfo = stockService.getStockInfo(symbol);
+			} else {
+				this.symbol = " ";
+				this.companyName = "Not Allowed";
+				this.currentPrice = (double) 0;
+				this.numberOfSharesOutstanding = 0;
+				this.stockInfo = this.symbol + "," + companyName + "," + currentPrice + "," + numberOfSharesOutstanding;
 			}
 		}
 	}
@@ -48,7 +59,7 @@ public class StockInformation {
 
 		StringBuilder sb = new StringBuilder();
 
-		if (stockInfo != null) {
+		if (stockInfo != null && loggedIn) {
 			// Process the comma-separated string
 			String[] stockData = stockInfo.split(",");
 			symbol = stockData[SYMBOL_POS];
@@ -58,7 +69,19 @@ public class StockInformation {
 			// ABC Computing [ABC] 10.5
 			sb.append(companyName);
 			sb.append("[").append(symbol).append("]").append(" ").append(currentPrice);
-		} else {
+		} else if (stockInfo != null && !loggedIn) {
+			String[] stockData = stockInfo.split(",");
+			symbol = stockData[SYMBOL_POS];
+			companyName = stockData[COMPANY_POS];
+			currentPrice = Double.valueOf(stockData[CURRENT_PRICE_POS]);
+			numberOfSharesOutstanding = Integer.valueOf(stockData[3]);
+			// ABC Computing [ABC] 10.5
+			sb.append(symbol);
+			sb.append(" ").append(companyName).append(" ").append(currentPrice).append(" ")
+					.append(numberOfSharesOutstanding);
+		}
+
+		else {
 			// No such symbol?
 			sb.append("No Such Symbol");
 		}
@@ -106,13 +129,15 @@ public class StockInformation {
 			marketCapitalisation += (currentPrice / 100 * numberOfSharesOutstanding);
 			marketCapitalisation /= 1000000;
 		}
-		return Math.floor(marketCapitalisation);
+		marketCapitalisationInMillions = (int) Math.floor(marketCapitalisation);
+		return marketCapitalisationInMillions;
 	}
 
 	public String getSymbol() {
 		return symbol;
 	}
 
+	@SuppressWarnings("unused")
 	private void setSymbol(String symbol) {
 		this.symbol = symbol;
 	}
@@ -121,6 +146,7 @@ public class StockInformation {
 		return available;
 	}
 
+	@SuppressWarnings("unused")
 	private void setAvailable(boolean available) {
 		this.available = available;
 	}
@@ -129,6 +155,7 @@ public class StockInformation {
 		return exists;
 	}
 
+	@SuppressWarnings("unused")
 	private void setExists(boolean exists) {
 		this.exists = exists;
 	}
@@ -137,6 +164,7 @@ public class StockInformation {
 		return companyName;
 	}
 
+	@SuppressWarnings("unused")
 	private void setCompanyName(String companyName) {
 		this.companyName = companyName;
 	}
@@ -145,6 +173,7 @@ public class StockInformation {
 		return currentPrice;
 	}
 
+	@SuppressWarnings("unused")
 	private void setCurrentPrice(Double currentPrice) {
 		this.currentPrice = currentPrice;
 	}
@@ -153,6 +182,7 @@ public class StockInformation {
 		return numberOfSharesOutstanding;
 	}
 
+	@SuppressWarnings("unused")
 	private void setNumberOfSharesOutstanding(Integer numberOfSharesOutstanding) {
 		this.numberOfSharesOutstanding = numberOfSharesOutstanding;
 	}
@@ -161,6 +191,7 @@ public class StockInformation {
 		return marketCapitalisationInMillions;
 	}
 
+	@SuppressWarnings("unused")
 	private void setMarketCapitalisationInMillions(Integer marketCapitalisationInMillions) {
 		this.marketCapitalisationInMillions = marketCapitalisationInMillions;
 	}

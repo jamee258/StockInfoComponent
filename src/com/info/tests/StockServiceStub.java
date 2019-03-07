@@ -9,6 +9,9 @@ public class StockServiceStub implements StockService {
 
 	@Override
 	public boolean authenticate(int userId, String password) {
+		if ((userId == 5) && (password.equals("Pa$$w0rd"))) {
+			return false;
+		}
 		return true;
 	}
 
