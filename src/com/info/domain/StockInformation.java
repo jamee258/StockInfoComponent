@@ -55,7 +55,7 @@ public class StockInformation {
 		return getFormattedStockInfo();
 	}
 
-	private String getFormattedStockInfo() {
+	public String getFormattedStockInfo() {
 
 		StringBuilder sb = new StringBuilder();
 
